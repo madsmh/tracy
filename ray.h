@@ -2,8 +2,8 @@
 // Created by mads on 05/08/2019.
 //
 
-#ifndef MGI_RAY_H
-#define MGI_RAY_H
+#ifndef TRACY_RAY_H
+#define TRACY_RAY_H
 
 
 #include "vector3.h"
@@ -33,4 +33,4 @@ public:
 };
 
 
-#endif //MGI_RAY_H
+#endif //TRACY_RAY_H
