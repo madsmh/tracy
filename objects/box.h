@@ -69,6 +69,8 @@ public:
         double y7 = y2;
         double z7 = z4;
 
+        corners[7] = Vector3(x7, y7, z7);
+
         normals[0] = cross(corners[2]-corners[1], corners[0]-corners[1]).normalize();
         normals[1] = cross(corners[7]-corners[2], corners[3]-corners[2]).normalize();
         normals[2] = cross(corners[7]-corners[4], corners[1]-corners[4]).normalize();
