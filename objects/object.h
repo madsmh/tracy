@@ -13,9 +13,7 @@ protected:
     // x, y, z coordinate of the origin
     Vector3 m_origin;
 
-    Vector3 getOrigin(){
-        return m_origin;
-    }
+    virtual Vector3 getOrigin();
 
 
 public:
@@ -23,9 +21,7 @@ public:
 
     virtual double doesIntersect(Ray ray);
 
-    void setOrigin(Vector3 newOrigin){
-        m_origin = newOrigin;
-    }
+    virtual void setOrigin(Vector3 newOrigin);
 
 };
 

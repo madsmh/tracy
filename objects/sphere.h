@@ -12,6 +12,10 @@ class Sphere : public Object {
 protected:
     double m_radius = 1;
 
+    Vector3 getOrigin() override {
+        return m_origin;
+    };
+
 public:
     Sphere(double radius, Vector3 origin){
         m_radius = radius;
@@ -35,6 +39,12 @@ public:
             return (-b - std::sqrt(d)) / (2.0 * a);
         }
     }
+
+    void setOrigin(Vector3 newOrigin) override {
+
+        m_origin = newOrigin;
+    }
+
 };
 
 
