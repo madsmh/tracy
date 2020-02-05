@@ -13,9 +13,17 @@ protected:
 
     // Length of the box's sides (x, y, z)
     Vector3 m_lengths;
+
+    // Array for the 8 vertices
     Vector3 m_corners [8];
+
+    // Array for the 6 normal vectors
     Vector3 m_normals [6];
+
+    // Array for point in each plane given by the normal vectors
     Vector3 m_pointsInPlanes [6];
+
+    // Below this is regarded as zero
     double m_epsilon = 0.001;
 
     Vector3 getOrigin() override {
@@ -131,8 +139,6 @@ public:
         double dotProducts[6];
         double t[6];
         double inf = std::numeric_limits<double>::infinity();
-
-
 
         for (int i = 0; i < 6 ; ++i) {
 
