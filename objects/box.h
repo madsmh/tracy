@@ -16,23 +16,31 @@ protected:
     Vector3 m_corners [8];
     Vector3 m_normals [6];
     Vector3 m_pointsInPlanes [6];
+    double m_epsilon = 0.001;
+
+    Vector3 getOrigin() override {
+        return m_origin;
+    }
 
     void originLength2coordsNorms ( Vector3 sideLengths, Vector3 origin){
+
+        m_lengths = sideLengths;
+
         // Calculate the vertices of the box and store in array m_corners
-        double x0 = origin[0] - sideLengths[0]/2.0;
-        double y0 = origin[1] - sideLengths[1]/2.0;
-        double z0 = origin[2] - sideLengths[2]/2.0;
+        double x0 = origin[0] - m_lengths[0]/2.0;
+        double y0 = origin[1] - m_lengths[1]/2.0;
+        double z0 = origin[2] - m_lengths[2]/2.0;
 
         m_corners[0] = Vector3(x0, y0, z0);
 
-        double x1 = origin[0] + sideLengths[0]/2.0;
+        double x1 = origin[0] + m_lengths[0]/2.0;
         double y1 = y0;
         double z1 = z0;
 
         m_corners[1] = Vector3(x1, y1, z1);
 
         double x2 = x1;
-        double y2 = origin[1] + sideLengths[1]/2.0;
+        double y2 = origin[1] + m_lengths[1]/2.0;
         double z2 = z0;
 
         m_corners[2] = Vector3(x2, y2, z2);
@@ -45,7 +53,7 @@ protected:
 
         double x4 = x1;
         double y4 = y1;
-        double z4 = origin[2] + sideLengths[2]/2.0;
+        double z4 = origin[2] + m_lengths[2]/2.0;
 
         m_corners[4] = Vector3(x4, y4, z4);
 
@@ -66,6 +74,26 @@ protected:
         double z7 = z4;
 
         m_corners[7] = Vector3(x7, y7, z7);
+
+
+        /*
+         * Sketch of the points m_corners[k]
+         *
+         *    6 +--------------+ 7
+         *     /|             /|
+         *    / |            / |
+         * 3 *--------------* 2|
+         *   |  |           |  |
+         *   |  |           |  |
+         *   |  |           |  |
+         *   |5 +-----------|--+ 4
+         *   | /            | /
+         *   |/             |/
+         * 0 *--------------* 1
+         *
+         *
+         */
+
 
         // Calculate the normals of sides
         m_normals[0] = cross(m_corners[2] - m_corners[1], m_corners[0] - m_corners[1]).normalize();
@@ -101,7 +129,6 @@ public:
     double doesIntersect (Ray ray) override {
 
         double dotProducts[6];
-        double epsilon = 0.001;
         double t[6];
         double inf = std::numeric_limits<double>::infinity();
 
@@ -111,7 +138,7 @@ public:
 
             dotProducts[i] = dot(ray.getDirection(), m_normals[i]);
 
-            if (std::abs(dotProducts[i]) > epsilon){
+            if (std::abs(dotProducts[i]) > m_epsilon){
                 t[i] = dot(m_pointsInPlanes[i]-ray.getOrigin(), m_normals[i])/(dotProducts[i]);
             } else if (i<3) {
                 t[i] = inf;
@@ -121,13 +148,22 @@ public:
         }
 
         for (double j : t) {
-            if (std::max(t[3], std::max(t[4], t[5]))<= j <= std::min(t[0],std::min(t[1],t[2]))){
+            if (std::max(t[3], std::max(t[4], t[5])) <= j <= std::min(t[0],std::min(t[1],t[2]))){
                 return j;
             }
         }
 
+        // if no valid intersection return negative number
         return -1.0;
 
+    }
+
+    Vector3 getNormal(Vector3 intersection) override {
+        for (int i = 0; i < 6; ++i) {
+            if (std::abs(dot(m_pointsInPlanes[i]-intersection, m_normals[i])) < m_epsilon){
+                return m_normals[i];
+            }
+        }
     }
 };
 
