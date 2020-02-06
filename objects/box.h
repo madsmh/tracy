@@ -170,7 +170,7 @@ public:
         double dotProduct;
 
         // lambda+ index 0-2, lambda- index 3-5
-        double  lambda[6];
+        double  lambda[6];double lambda_minus[3];
         double inf = std::numeric_limits<double>::infinity();
 
 
@@ -182,11 +182,16 @@ public:
             double a = dot(m_pointsInPlanes[0]-ray.getOrigin(), m_normals[0])/(dotProduct);
             double b = dot(m_pointsInPlanes[5]-ray.getOrigin(), m_normals[5])/(dotProduct);
 
+            //lambda0 +
             lambda[0] = std::min(a,b);
+            //lambda0 -
             lambda[3] = std::max(a,b);
 
         } else {
+
+            //lambda0 +
             lambda[0] = -inf;
+            // lambda0 -
             lambda[3] = inf;
         }
 
@@ -198,11 +203,15 @@ public:
             double a = dot(m_pointsInPlanes[1]-ray.getOrigin(), m_normals[1])/(dotProduct);
             double b = dot(m_pointsInPlanes[3]-ray.getOrigin(), m_normals[3])/(dotProduct);
 
+            //lambda1 +
             lambda[1] = std::min(a,b);
+            //lambda1 -
             lambda[4] = std::max(a,b);
 
         } else {
+            //lambda1 +
             lambda[1] = -inf;
+            //lambda1 -
             lambda[4] = inf;
         }
 
@@ -214,11 +223,15 @@ public:
             double a = dot(m_pointsInPlanes[2]-ray.getOrigin(), m_normals[2])/(dotProduct);
             double b = dot(m_pointsInPlanes[4]-ray.getOrigin(), m_normals[4])/(dotProduct);
 
+            //lambda2 +
             lambda[2] = std::min(a,b);
+            //lambda2 -
             lambda[5] = std::max(a,b);
 
         } else {
+            //lambda2 +
             lambda[2] = -inf;
+            //lambda2 -
             lambda[5] = inf;
         }
 
