@@ -36,7 +36,7 @@ static Vector3 getPerpendicularDirection(const Vector3& vector1, const Vector3& 
 
 static void verify(const Box& box, const Ray& ray, bool expected, int line)
 {
-   double returned = box.doesIntersect(ray);
+   double returned = box.intersectParam(ray);
    bool value = returned != -1.0;
 
    if (value != expected)
