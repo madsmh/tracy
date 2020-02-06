@@ -4,7 +4,7 @@
 
 #include "objects/box.h"
 
-static Ray getRandomRayThroughPoint(const Vector3& point)
+static Ray getRandomRayTowardsPoint(const Vector3& point)
 {
    // A random direction
    const Vector3 direction(3.0, 2.0, 1.0);         // TODO
@@ -15,9 +15,10 @@ static Ray getRandomRayThroughPoint(const Vector3& point)
    // A temporaryy ray through the given point
    Ray tempRay(point, direction);
 
-   // A point far away from the given
-   Vector3 newPoint = tempRay.getPtAtParameter(dist);
+   // A point far away from the given, in the backwards direction.
+   Vector3 newPoint = tempRay.getPtAtParameter(-dist);
 
+   // Return ray pointing towards the given point.
    return Ray(newPoint, direction);
 }
 
@@ -58,7 +59,7 @@ static void test_box()
    Vector3 centre(100.0, 150.0, 350.0);               // TODO
    Vector3 lengths(13.0, 15.0, 17.0);                 // TODO
    Box box(lengths, centre);
-   Ray ray = getRandomRayThroughPoint(centre);
+   Ray ray = getRandomRayTowardsPoint(centre);
    Vector3 dir1 = getRandomPerpendicularDirection(ray.getDirection());
    Vector3 dir2 = getPerpendicularDirection(ray.getDirection(), dir1);
 
