@@ -26,7 +26,7 @@ protected:
     // Below this is regarded as zero
     double m_epsilon = 0.001;
 
-    Vector3 getOrigin() override {
+    Vector3 getOrigin() const override {
         return m_origin;
     }
 
@@ -134,7 +134,7 @@ public:
         originLength2coordsNorms(m_lengths, newOrigin);
     }
 
-    double doesIntersect (Ray ray) override {
+    double doesIntersect (Ray ray) const override {
 
         double dotProducts[6];
         double t[6];
@@ -164,12 +164,13 @@ public:
 
     }
 
-    Vector3 getNormal(Vector3 intersection) override {
+    Vector3 getNormal(Vector3 intersection) const override {
         for (int i = 0; i < 6; ++i) {
             if (std::abs(dot(m_pointsInPlanes[i]-intersection, m_normals[i])) < m_epsilon){
                 return m_normals[i];
             }
         }
+        return Vector3(0.0, 0.0, 0.0); // TODO
     }
 };
 

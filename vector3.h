@@ -24,7 +24,7 @@
 #include <cmath>
 
 class Vector3 {
-    static double m_coords[3];
+    double m_coords[3];
 
     public:
     inline explicit Vector3(double x = 0.0, double y = 0.0, double z = 0.0) {
