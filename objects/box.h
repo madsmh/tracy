@@ -111,6 +111,15 @@ protected:
         m_normals[4] = cross(m_corners[6] - m_corners[3], m_corners[0] - m_corners[3]).normalize();
         m_normals[5] = cross(m_corners[5] - m_corners[4], m_corners[7] - m_corners[4]).normalize();
 
+
+        /*
+         * Pairs of anti-parallel normal vectors:
+         * 0 and 5
+         * 1 and 3
+         * 2 and 4
+         */
+
+
         // selects points in the place defined by the normal vector in m_normals[k]
         m_pointsInPlanes[0] = m_corners[0];
         m_pointsInPlanes[1] = m_corners[2];
@@ -143,27 +152,81 @@ public:
         /* Returns the parameter at which the ray intersects.
          * Only positive parameters are used, returns -1.0 if
          * no intersection.
+         *
+         *
+         * Have used the method described in
+         * https://math.stackexchange.com/a/1477956/89850
+         *
+         *
+         * Index of pairs of anti-parallel normal vectors:
+         * 0 and 5
+         * 1 and 3
+         * 2 and 4
+         *
+         * Indices 0, 1, 2 are the + planes in that order
+         * and 5, 3, 4 are - planes in that order
          */
 
-        double dotProducts[6];
-        double t[6];
+        double dotProduct;
+
+        // lambda+ index 0-2, lambda- index 3-5
+        double  lambda[6];
         double inf = std::numeric_limits<double>::infinity();
 
-        for (int i = 0; i < 6 ; ++i) {
 
-            dotProducts[i] = dot(ray.getDirection(), m_normals[i]);
+        // lambda_0+/-
 
-            if (std::abs(dotProducts[i]) > m_epsilon){
-                t[i] = dot(m_pointsInPlanes[i]-ray.getOrigin(), m_normals[i])/(dotProducts[i]);
-            } else if (i<3) {
-                t[i] = inf;
-            } else if (i>=3){
-                t[i] = -inf;
-            }
+        dotProduct = dot(ray.getDirection(), m_normals[0]);
+
+        if (std::abs(dotProduct) > m_epsilon){
+            double a = dot(m_pointsInPlanes[0]-ray.getOrigin(), m_normals[0])/(dotProduct);
+            double b = dot(m_pointsInPlanes[5]-ray.getOrigin(), m_normals[5])/(dotProduct);
+
+            lambda[0] = std::min(a,b);
+            lambda[3] = std::max(a,b);
+
+        } else {
+            lambda[0] = -inf;
+            lambda[3] = inf;
         }
 
-        for (double j : t) {
-            if (std::max(t[3], std::max(t[4], t[5])) <= j <= std::min(t[0],std::min(t[1],t[2]))){
+        // lambda_1+/-
+
+        dotProduct = dot(ray.getDirection(), m_normals[1]);
+
+        if (std::abs(dotProduct) > m_epsilon){
+            double a = dot(m_pointsInPlanes[1]-ray.getOrigin(), m_normals[1])/(dotProduct);
+            double b = dot(m_pointsInPlanes[3]-ray.getOrigin(), m_normals[3])/(dotProduct);
+
+            lambda[1] = std::min(a,b);
+            lambda[4] = std::max(a,b);
+
+        } else {
+            lambda[1] = -inf;
+            lambda[4] = inf;
+        }
+
+        // lambda_2+/-
+
+        dotProduct = dot(ray.getDirection(), m_normals[2]);
+
+        if (std::abs(dotProduct) > m_epsilon){
+            double a = dot(m_pointsInPlanes[2]-ray.getOrigin(), m_normals[2])/(dotProduct);
+            double b = dot(m_pointsInPlanes[4]-ray.getOrigin(), m_normals[4])/(dotProduct);
+
+            lambda[2] = std::min(a,b);
+            lambda[5] = std::max(a,b);
+
+        } else {
+            lambda[2] = -inf;
+            lambda[5] = inf;
+        }
+
+        // Check for valid intersections
+
+        for (double j : lambda) {
+            if (std::max(lambda[0], std::max(lambda[1], lambda[2])) <= j <= std::min(lambda[3],std::min(lambda[4],lambda[5])))
+            {
                 return j;
             }
         }
