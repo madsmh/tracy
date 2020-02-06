@@ -24,7 +24,7 @@ protected:
     Vector3 m_pointsInPlanes [6];
 
     // Below this is regarded as zero
-    const double m_epsilon = 0.0001;
+    const double m_epsilon = 0.001;
 
     Vector3 getOrigin() const override {
         return m_origin;
@@ -167,20 +167,21 @@ public:
          * and 5, 3, 4 are - planes in that order
          */
 
-        double dotProduct;
+        double dotProduct1, dotProduct2;
 
         // lambda+ index 0-2, lambda- index 3-5
-        double  lambda[6];double lambda_minus[3];
+        double  lambda[6];
         double inf = std::numeric_limits<double>::infinity();
 
 
         // lambda_0+/-
 
-        dotProduct = dot(ray.getDirection(), m_normals[0]);
+        dotProduct1 = dot(ray.getDirection(), m_normals[0]);
+        dotProduct2 = dot(ray.getDirection(),m_normals[5]);
 
-        if (std::abs(dotProduct) > m_epsilon){
-            double a = dot(m_pointsInPlanes[0]-ray.getOrigin(), m_normals[0])/(dotProduct);
-            double b = dot(m_pointsInPlanes[5]-ray.getOrigin(), m_normals[5])/(dotProduct);
+        if (std::abs(dotProduct1) > m_epsilon){
+            double a = dot(m_pointsInPlanes[0]-ray.getOrigin(), m_normals[0])/(dotProduct1);
+            double b = dot(m_pointsInPlanes[5]-ray.getOrigin(), m_normals[5])/(dotProduct2);
 
             //lambda0 +
             lambda[0] = std::min(a,b);
@@ -190,18 +191,19 @@ public:
         } else {
 
             //lambda0 +
-            lambda[0] = -inf;
+            lambda[0] = -1.0*inf;
             // lambda0 -
             lambda[3] = inf;
         }
 
         // lambda_1+/-
 
-        dotProduct = dot(ray.getDirection(), m_normals[1]);
+        dotProduct1 = dot(ray.getDirection(), m_normals[1]);
+        dotProduct2 = dot(ray.getDirection(),m_normals[3]);
 
-        if (std::abs(dotProduct) > m_epsilon){
-            double a = dot(m_pointsInPlanes[1]-ray.getOrigin(), m_normals[1])/(dotProduct);
-            double b = dot(m_pointsInPlanes[3]-ray.getOrigin(), m_normals[3])/(dotProduct);
+        if (std::abs(dotProduct1) > m_epsilon){
+            double a = dot(m_pointsInPlanes[1]-ray.getOrigin(), m_normals[1])/(dotProduct1);
+            double b = dot(m_pointsInPlanes[3]-ray.getOrigin(), m_normals[3])/(dotProduct2);
 
             //lambda1 +
             lambda[1] = std::min(a,b);
@@ -210,18 +212,19 @@ public:
 
         } else {
             //lambda1 +
-            lambda[1] = -inf;
+            lambda[1] = -1.0*inf;
             //lambda1 -
             lambda[4] = inf;
         }
 
         // lambda_2+/-
 
-        dotProduct = dot(ray.getDirection(), m_normals[2]);
+        dotProduct1 = dot(ray.getDirection(), m_normals[2]);
+        dotProduct2 = dot(ray.getDirection(), m_normals[4]);
 
-        if (std::abs(dotProduct) > m_epsilon){
-            double a = dot(m_pointsInPlanes[2]-ray.getOrigin(), m_normals[2])/(dotProduct);
-            double b = dot(m_pointsInPlanes[4]-ray.getOrigin(), m_normals[4])/(dotProduct);
+        if (std::abs(dotProduct1) > m_epsilon){
+            double a = dot(m_pointsInPlanes[2]-ray.getOrigin(), m_normals[2])/(dotProduct1);
+            double b = dot(m_pointsInPlanes[4]-ray.getOrigin(), m_normals[4])/(dotProduct2);
 
             //lambda2 +
             lambda[2] = std::min(a,b);
@@ -230,7 +233,7 @@ public:
 
         } else {
             //lambda2 +
-            lambda[2] = -inf;
+            lambda[2] = -1.0*inf;
             //lambda2 -
             lambda[5] = inf;
         }
