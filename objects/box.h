@@ -129,7 +129,7 @@ protected:
         m_pointsInPlanes[5] = m_corners[7];
     }
 
-    void calcLambda (Ray ray, double (&intersect_candidates)[6], int indexPlus, int indexMinus, int normalPlus, int normalMinus) const {
+    void calcLambda (Ray ray, double& lambda_plus, double& lambda_minus, int normalPlus, int normalMinus) const {
 
         double dotProduct1, dotProduct2;
         double inf = std::numeric_limits<double>::infinity();
@@ -138,20 +138,15 @@ protected:
         dotProduct2 = dot(ray.getDirection(),m_normals[normalMinus]);
 
         if (std::abs(dotProduct1) > m_epsilon){
-            double a = dot(m_pointsInPlanes[normalPlus]-ray.getOrigin(), m_normals[normalPlus])/(dotProduct1);
+            double a = dot(m_pointsInPlanes[normalPlus]-ray.getOrigin(),  m_normals[normalPlus])/(dotProduct1);
             double b = dot(m_pointsInPlanes[normalMinus]-ray.getOrigin(), m_normals[normalMinus])/(dotProduct2);
 
-            //lambda +
-            intersect_candidates[indexPlus] = std::min(a, b);
-            //lambda -
-            intersect_candidates[indexMinus] = std::max(a, b);
+            lambda_plus  = std::min(a, b);
+            lambda_minus = std::max(a, b);
 
         } else {
-
-            //lambda +
-            intersect_candidates[indexPlus] = -1.0 * inf;
-            // lambda0 -
-            intersect_candidates[indexMinus] = inf;
+            lambda_plus  = -inf;
+            lambda_minus = inf;
         }
     }
 public:
@@ -195,14 +190,17 @@ public:
         // lambda+ index 0-2, lambda- index 3-5
         double  lambda[6];
 
-        calcLambda(ray, lambda, 0, 3, 0, 5);
-        calcLambda(ray, lambda, 1, 4, 1, 3);
-        calcLambda(ray, lambda, 2, 5, 2, 4);
+        calcLambda(ray, lambda[0], lambda[3], 0, 5);
+        calcLambda(ray, lambda[1], lambda[4], 1, 3);
+        calcLambda(ray, lambda[2], lambda[5], 2, 4);
 
         // Check for valid intersections
 
+        double lambda_max = std::max(lambda[0], std::max(lambda[1], lambda[2]));
+        double lambda_min = std::min(lambda[3],std::min(lambda[4],lambda[5]));
+
         for (double j : lambda) {
-            if (std::max(lambda[0], std::max(lambda[1], lambda[2])) <= j <= std::min(lambda[3],std::min(lambda[4],lambda[5])))
+            if ((lambda_max <= j) && (j <= lambda_min))
             {
                 return j;
             }
