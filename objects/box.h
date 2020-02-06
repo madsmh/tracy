@@ -202,12 +202,17 @@ public:
         for (double j : lambda) {
             if ((lambda_max <= j) && (j <= lambda_min))
             {
+                std::cout << j << std::endl;
                 return j;
             }
         }
 
-        // if no valid intersection return negative number
+        std::cout << "-1.0" << std::endl;
         return -1.0;
+
+
+        // if no valid intersection return negative number
+
 
     }
 

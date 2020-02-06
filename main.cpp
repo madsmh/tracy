@@ -56,10 +56,10 @@ static void test_box()
    // ray  : Some random ray passing through the centre of the box.
    // dir1 & dir2 : Two normalized perpendicular vectors, each perpendicular to the ray.
 
-   Vector3 centre(4, 0, 0);               // TODO
-   Vector3 lengths(1, 1, 1);                 // TODO
+   Vector3 centre(5.0, 5.0, 5.0);               // TODO
+   Vector3 lengths(1.0, 1.0,1.0);                 // TODO
    Box box(lengths, centre);
-   Ray ray(Vector3(0,0,0),Vector3(1,0,0));
+   Ray ray(Vector3(0.0,0.0,0.0),Vector3(1.0,0.0,0.0));
    //Ray ray = getRandomRayTowardsPoint(centre);
    //Vector3 dir1 = getRandomPerpendicularDirection(ray.getDirection());
    //Vector3 dir2 = getPerpendicularDirection(ray.getDirection(), dir1);
@@ -78,6 +78,12 @@ static void test_box()
 
 int main()
 {
-   test_box();
+   //test_box();
+
+    Vector3 centre(5.0, 5.0, 5.0);
+    Vector3 lengths(1.0, 1.0,1.0);
+    Box box(lengths, centre);
+    Ray ray(Vector3(0.0,0.0,0.0),Vector3(1.0,0.0,0.0));
+    box.intersectParam(ray);
 }
 
