@@ -10,21 +10,21 @@
 
 class Object {
 public:
-    virtual ~Object() {}
+    virtual ~Object();
 
 protected:
     // x, y, z coordinate of the origin
     Vector3 m_origin;
 
-    virtual Vector3 getOrigin() const;
+    virtual Vector3 getOrigin() const = 0;
 
 
 public:
-    virtual Vector3 getNormal (Vector3 intersection) const;
+    virtual Vector3 getNormal (Vector3 intersection) const = 0;
 
-    virtual double doesIntersect(Ray ray) const;
+    virtual double doesIntersect(Ray ray) const = 0;
 
-    virtual void setOrigin(Vector3 newOrigin);
+    virtual void setOrigin(Vector3 newOrigin) = 0;
 
 };
 
