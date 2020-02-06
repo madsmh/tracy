@@ -129,6 +129,31 @@ protected:
         m_pointsInPlanes[5] = m_corners[7];
     }
 
+    void calcLambda (Ray ray, double (&intersect_candidates)[6], int indexPlus, int indexMinus, int normalPlus, int normalMinus) const {
+
+        double dotProduct1, dotProduct2;
+        double inf = std::numeric_limits<double>::infinity();
+
+        dotProduct1 = dot(ray.getDirection(),m_normals[normalPlus]);
+        dotProduct2 = dot(ray.getDirection(),m_normals[normalMinus]);
+
+        if (std::abs(dotProduct1) > m_epsilon){
+            double a = dot(m_pointsInPlanes[normalPlus]-ray.getOrigin(), m_normals[normalPlus])/(dotProduct1);
+            double b = dot(m_pointsInPlanes[normalMinus]-ray.getOrigin(), m_normals[normalMinus])/(dotProduct2);
+
+            //lambda +
+            intersect_candidates[indexPlus] = std::min(a, b);
+            //lambda -
+            intersect_candidates[indexMinus] = std::max(a, b);
+
+        } else {
+
+            //lambda +
+            intersect_candidates[indexPlus] = -1.0 * inf;
+            // lambda0 -
+            intersect_candidates[indexMinus] = inf;
+        }
+    }
 public:
 
     explicit Box (Vector3 sideLengths, Vector3 origin = Vector3(0,0,0)){
@@ -167,76 +192,13 @@ public:
          * and 5, 3, 4 are - planes in that order
          */
 
-        double dotProduct1, dotProduct2;
-
         // lambda+ index 0-2, lambda- index 3-5
         double  lambda[6];
         double inf = std::numeric_limits<double>::infinity();
 
-
-        // lambda_0+/-
-
-        dotProduct1 = dot(ray.getDirection(), m_normals[0]);
-        dotProduct2 = dot(ray.getDirection(),m_normals[5]);
-
-        if (std::abs(dotProduct1) > m_epsilon){
-            double a = dot(m_pointsInPlanes[0]-ray.getOrigin(), m_normals[0])/(dotProduct1);
-            double b = dot(m_pointsInPlanes[5]-ray.getOrigin(), m_normals[5])/(dotProduct2);
-
-            //lambda0 +
-            lambda[0] = std::min(a,b);
-            //lambda0 -
-            lambda[3] = std::max(a,b);
-
-        } else {
-
-            //lambda0 +
-            lambda[0] = -1.0*inf;
-            // lambda0 -
-            lambda[3] = inf;
-        }
-
-        // lambda_1+/-
-
-        dotProduct1 = dot(ray.getDirection(), m_normals[1]);
-        dotProduct2 = dot(ray.getDirection(),m_normals[3]);
-
-        if (std::abs(dotProduct1) > m_epsilon){
-            double a = dot(m_pointsInPlanes[1]-ray.getOrigin(), m_normals[1])/(dotProduct1);
-            double b = dot(m_pointsInPlanes[3]-ray.getOrigin(), m_normals[3])/(dotProduct2);
-
-            //lambda1 +
-            lambda[1] = std::min(a,b);
-            //lambda1 -
-            lambda[4] = std::max(a,b);
-
-        } else {
-            //lambda1 +
-            lambda[1] = -1.0*inf;
-            //lambda1 -
-            lambda[4] = inf;
-        }
-
-        // lambda_2+/-
-
-        dotProduct1 = dot(ray.getDirection(), m_normals[2]);
-        dotProduct2 = dot(ray.getDirection(), m_normals[4]);
-
-        if (std::abs(dotProduct1) > m_epsilon){
-            double a = dot(m_pointsInPlanes[2]-ray.getOrigin(), m_normals[2])/(dotProduct1);
-            double b = dot(m_pointsInPlanes[4]-ray.getOrigin(), m_normals[4])/(dotProduct2);
-
-            //lambda2 +
-            lambda[2] = std::min(a,b);
-            //lambda2 -
-            lambda[5] = std::max(a,b);
-
-        } else {
-            //lambda2 +
-            lambda[2] = -1.0*inf;
-            //lambda2 -
-            lambda[5] = inf;
-        }
+        calcLambda(ray, lambda, 0, 3, 0, 5);
+        calcLambda(ray, lambda, 1, 4, 1, 3);
+        calcLambda(ray, lambda, 2, 5, 2, 4);
 
         // Check for valid intersections
 
