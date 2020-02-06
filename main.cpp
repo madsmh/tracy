@@ -2,10 +2,9 @@
 // Created by mike on 06/02/2020.
 //
 
-#include <assert.h>
 #include "objects/box.h"
 
-Ray getRandomRayThroughPoint(const Vector3& point)
+static Ray getRandomRayThroughPoint(const Vector3& point)
 {
    // A random direction
    const Vector3 direction(3.0, 2.0, 1.0);         // TODO
@@ -22,52 +21,61 @@ Ray getRandomRayThroughPoint(const Vector3& point)
    return Ray(newPoint, direction);
 }
 
-Ray getRandomPerpendicularRay(const Ray& ray)
+static Vector3 getRandomPerpendicularDirection(const Vector3& direction)
 {
    const double epsilon = 0.001;
-   const Vector3 direction(1.0, 1.0, 1.0 + epsilon);
-   const Vector3 newDirection = cross(ray.getDirection(), direction).normalize();
-   return Ray(ray.getOrigin(), newDirection);
+   const Vector3 someOtherDirection(1.0, 1.0, 1.0 + epsilon);
+   return cross(someOtherDirection, direction).normalize();
 }
 
-Ray getPerpendicularRay(const Ray& ray1, const Ray& ray2)
+static Vector3 getPerpendicularDirection(const Vector3& vector1, const Vector3& vector2)
 {
-   const Vector3 newDirection = cross(ray1.getDirection(), ray2.getDirection()).normalize();
-   return Ray(ray1.getOrigin(), newDirection);
+   return cross(vector1, vector2).normalize();
 }
 
-void verify(const Box& box, const Ray& ray, bool expected)
+static void verify(const Box& box, const Ray& ray, bool expected, int line)
 {
-   bool value = box.doesIntersect(ray) != -1.0;
+   double returned = box.doesIntersect(ray);
+   bool value = returned != -1.0;
 
-   assert (value == expected);
+   if (value != expected)
+   {
+      std::cerr << "FAIL in line : " << line << std::endl;
+      std::cerr << "Box          : " << box << std::endl;
+      std::cerr << "Ray          : " << ray << std::endl;
+      std::cerr << "Returned     : " << returned << std::endl;
+      std::cerr << std::endl;
+   }
+}
+
+static void test_box()
+{
+   // Setup variables for the test:
+   // box  : A random box somewhere far from the origin.
+   // ray  : Some random ray passing through the centre of the box.
+   // dir1 & dir2 : Two normalized perpendicular vectors, each perpendicular to the ray.
+
+   Vector3 centre(100.0, 150.0, 350.0);               // TODO
+   Vector3 lengths(13.0, 15.0, 17.0);                 // TODO
+   Box box(lengths, centre);
+   Ray ray = getRandomRayThroughPoint(centre);
+   Vector3 dir1 = getRandomPerpendicularDirection(ray.getDirection());
+   Vector3 dir2 = getPerpendicularDirection(ray.getDirection(), dir1);
+
+   verify(box, ray, true, __LINE__);
+
+   verify(box, ray+100*ray.getDirection(), true, __LINE__);
+   verify(box, ray-100*ray.getDirection(), true, __LINE__);
+
+   verify(box, ray+100*dir1, false, __LINE__);
+   verify(box, ray-100*dir1, false, __LINE__);
+
+   verify(box, ray+100*dir2, false, __LINE__);
+   verify(box, ray-100*dir2, false, __LINE__);
 }
 
 int main()
 {
-   // A random box somewhere far from the origin
-   Vector3 centre(100.0, 150.0, 350.0);               // TODO
-   Vector3 lengths(13.0, 15.0, 17.0);                 // TODO
-   Box box(lengths, centre);
-
-   // A ray through the centre of the box.
-   Ray ray = getRandomRayThroughPoint(centre);
-
-   // A second ray perpendicular to the first
-   Ray ray2 = getRandomPerpendicularRay(ray);
-
-   // A third ray perpendicular to the first two
-   Ray ray3 = getPerpendicularRay(ray, ray2);
-
-   verify(box, ray, true);
-
-   verify(box, ray+100*ray.getDirection(), true);
-   verify(box, ray-100*ray.getDirection(), true);
-
-   verify(box, ray+100*ray2.getDirection(), false);
-   verify(box, ray-100*ray2.getDirection(), false);
-
-   verify(box, ray+100*ray3.getDirection(), false);
-   verify(box, ray-100*ray3.getDirection(), false);
+   test_box();
 }
 

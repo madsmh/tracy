@@ -39,6 +39,10 @@ public:
         return Ray(lhs.getOrigin()-rhs, lhs.getDirection());;
     }
 
+    inline friend std::ostream& operator << (std::ostream& os, const Ray& rhs) {
+       return os << rhs.m_origin << " , " << rhs.m_direction;
+    }
+
 };
 
 

@@ -130,6 +130,10 @@ public:
 
     }
 
+    inline friend std::ostream& operator << (std::ostream& os, const Box& rhs) {
+       return os << rhs.m_lengths << " , " << rhs.m_origin;
+    }
+
     void setOrigin(Vector3 newOrigin) override{
         originLength2coordsNorms(m_lengths, newOrigin);
     }
