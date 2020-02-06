@@ -194,7 +194,6 @@ public:
 
         // lambda+ index 0-2, lambda- index 3-5
         double  lambda[6];
-        double inf = std::numeric_limits<double>::infinity();
 
         calcLambda(ray, lambda, 0, 3, 0, 5);
         calcLambda(ray, lambda, 1, 4, 1, 3);
