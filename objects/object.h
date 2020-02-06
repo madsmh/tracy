@@ -22,7 +22,11 @@ protected:
 public:
     virtual Vector3 getNormal (Vector3 intersection) const = 0;
 
-    virtual double doesIntersect(Ray ray) const = 0;
+    // Returns the parameter at which the ray intersects.
+    // Only positive parameters are used, returns -1.0 if
+    // no intersection.
+
+    virtual double intersectParam(Ray ray) const = 0;
 
     virtual void setOrigin(Vector3 newOrigin) = 0;
 

@@ -26,8 +26,12 @@ public:
         return (intersection-m_origin).normalize();
     }
 
-    // Returns a positive parameter for appropriate intersections. Discard if non-positive.
-    double doesIntersect(Ray ray) const override {
+    double intersectParam(Ray ray) const override {
+
+        // Returns the parameter at which the ray intersects.
+        // Only positive parameters are used, returns -1.0 if
+        // no intersection.
+
         double a = dot(ray.getDirection(), ray.getDirection());
         double b = 2.0 * dot(ray.getOrigin(), ray.getDirection()-m_origin);
         double c = dot(ray.getOrigin()-m_origin, ray.getOrigin()-m_origin) - m_radius * m_radius;

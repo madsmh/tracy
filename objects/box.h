@@ -24,7 +24,7 @@ protected:
     Vector3 m_pointsInPlanes [6];
 
     // Below this is regarded as zero
-    double m_epsilon = 0.001;
+    const double m_epsilon = 0.0001;
 
     Vector3 getOrigin() const override {
         return m_origin;
@@ -138,7 +138,12 @@ public:
         originLength2coordsNorms(m_lengths, newOrigin);
     }
 
-    double doesIntersect (Ray ray) const override {
+    double intersectParam (Ray ray) const override {
+
+        /* Returns the parameter at which the ray intersects.
+         * Only positive parameters are used, returns -1.0 if
+         * no intersection.
+         */
 
         double dotProducts[6];
         double t[6];
