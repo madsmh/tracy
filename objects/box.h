@@ -125,6 +125,9 @@ protected:
         double a = m_planes[plane1].intersectParam(ray);
         double b = m_planes[plane2].intersectParam(ray);
 
+        std::cout << m_plane_names[plane1] << "   : " << a << ",   ";
+        std::cout << m_plane_names[plane2] << "   : " << b << std::endl;
+
         if (a == b) {
             lambda_plus  = -std::numeric_limits<double>::infinity();
             lambda_minus = std::numeric_limits<double>::infinity();
