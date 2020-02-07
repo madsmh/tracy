@@ -25,7 +25,7 @@ public:
     }
 
     inline friend std::ostream& operator << (std::ostream& os, const Plane& rhs) {
-       return os << rhs.m_pointInPlane << " , " << rhs.m_normal;
+       return os << "Point=" << rhs.m_pointInPlane << ", Normal=" << rhs.m_normal;
     }
 
     Vector3 getOrigin() const override {

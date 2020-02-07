@@ -40,7 +40,7 @@ public:
     }
 
     inline friend std::ostream& operator << (std::ostream& os, const Ray& rhs) {
-       return os << rhs.m_origin << " , " << rhs.m_direction;
+       return os << "Origin=" << rhs.m_origin << ", Direction=" << rhs.m_direction;
     }
 
 };
