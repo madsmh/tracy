@@ -19,7 +19,8 @@ static Vector3 getRandomVector3()
 static Ray getRandomRayTowardsPoint(const Vector3& point)
 {
    // A random direction
-   const Vector3 direction = getRandomVector3().normalize();
+   //const Vector3 direction = getRandomVector3().normalize();
+   const Vector3 direction(1.0, 0.0, 0.0);
 
    // A random distance away from the point
    const double dist = -log(uniformDistribution(generator));
@@ -103,7 +104,7 @@ static void verify_box(const Box& box, const Ray& ray, bool expected, int line)
    double returned = box.intersectParam(ray);
    bool value = (returned > 0.0 );
 
-   std::cerr << "Testing line : " << line;
+   std::cerr << "Testing line " << line << " : ";
 
    if (value != expected)
    {
@@ -124,14 +125,16 @@ static void test_box()
    // ray  : Some random ray passing through the centre of the box.
    // dir1 & dir2 : Two normalized perpendicular vectors, each perpendicular to the ray.
 
-   Vector3 centre(500.0, 600.0, 900.0);               // TODO
-   Vector3 lengths(13.0, 15.0, 17.0);                 // TODO
+   Vector3 centre(10.0, 0.0, 0.0);               // TODO
+   Vector3 lengths(2.0, 2.0, 2.0);                 // TODO
    Box box(lengths, centre);
    //Ray ray(Vector3(0.0,0.0,0.0),Vector3(1.0,0.0,0.0));
 
    Ray ray = getRandomRayTowardsPoint(centre);
    Vector3 dir1 = getRandomPerpendicularDirection(ray.getDirection());
    Vector3 dir2 = getPerpendicularDirection(ray.getDirection(), dir1);
+
+   std::cerr << std::endl << std::endl;
 
    verify_box(box, ray, true, __LINE__);
 
@@ -147,8 +150,8 @@ static void test_box()
 
 int main()
 {
-    test_plane();
-//    test_box();
+//    test_plane();
+    test_box();
 
 //    Vector3 centre(5.0, 5.0, 5.0);
 //    Vector3 lengths(1.0, 1.0,1.0);
