@@ -62,7 +62,7 @@ protected:
         m_corners[1] = m_corners[0] + deltaX;
         m_corners[2] = m_corners[0] + deltaX + deltaY;
         m_corners[3] = m_corners[0] + deltaY;
-        m_corners[4] = m_corners[4] - deltaZ;
+        m_corners[4] = m_corners[1] - deltaZ;
         m_corners[5] = m_corners[0] - deltaZ;
         m_corners[6] = m_corners[3] - deltaZ;
         m_corners[7] = m_corners[2] - deltaZ;
