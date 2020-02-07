@@ -27,58 +27,18 @@ protected:
         return m_origin;
     }
 
+
     void originLength2coordsNorms ( Vector3 sideLengths, Vector3 origin){
         m_lengths = sideLengths;
+
+        Vector3 deltaX(m_lengths[0], 0.0, 0.0);
+        Vector3 deltaY(0.0, m_lengths[1], 0.0);
+        Vector3 deltaZ(0.0, 0.0, m_lengths[2]);
 
         // Calculate the vertices of the box and store in array m_corners
         double x0 = origin[0] - m_lengths[0]/2.0;
         double y0 = origin[1] - m_lengths[1]/2.0;
         double z0 = origin[2] - m_lengths[2]/2.0;
-
-        m_corners[0] = Vector3(x0, y0, z0);
-
-        double x1 = origin[0] + m_lengths[0]/2.0;
-        double y1 = y0;
-        double z1 = z0;
-
-        m_corners[1] = Vector3(x1, y1, z1);
-
-        double x2 = x1;
-        double y2 = origin[1] + m_lengths[1]/2.0;
-        double z2 = z0;
-
-        m_corners[2] = Vector3(x2, y2, z2);
-
-        double x3 = x0;
-        double y3 = y2;
-        double z3 = z0;
-
-        m_corners[3] = Vector3(x3, y3, z3);
-
-        double x4 = x1;
-        double y4 = y1;
-        double z4 = origin[2] + m_lengths[2]/2.0;
-
-        m_corners[4] = Vector3(x4, y4, z4);
-
-        double x5 = x0;
-        double y5 = y0;
-        double z5 = z4;
-
-        m_corners[5] = Vector3(x5, y5, z5);
-
-        double x6 = x3;
-        double y6 = y3;
-        double z6 = z4;
-
-        m_corners[6] = Vector3(x6, y6, z6);
-
-        double x7 = x2;
-        double y7 = y2;
-        double z7 = z4;
-
-        m_corners[7] = Vector3(x7, y7, z7);
-
 
         /*
          * Sketch of the points m_corners[k]
@@ -97,6 +57,15 @@ protected:
          *
          *
          */
+
+        m_corners[0] = Vector3(x0, y0, z0);
+        m_corners[1] = m_corners[0] + deltaX;
+        m_corners[2] = m_corners[0] + deltaX + deltaY;
+        m_corners[3] = m_corners[0] + deltaY;
+        m_corners[4] = m_corners[4] - deltaZ;
+        m_corners[5] = m_corners[0] - deltaZ;
+        m_corners[6] = m_corners[3] - deltaZ;
+        m_corners[7] = m_corners[2] - deltaZ;
 
         m_planes[0] = Plane(m_corners[0], m_corners[1], m_corners[2]);  // Front
         m_planes[1] = Plane(m_corners[2], m_corners[7], m_corners[6]);  // Top
@@ -125,15 +94,28 @@ protected:
         double a = m_planes[plane1].intersectParam(ray);
         double b = m_planes[plane2].intersectParam(ray);
 
-        std::cout << m_plane_names[plane1] << "   : " << a << ",   ";
-        std::cout << m_plane_names[plane2] << "   : " << b << std::endl;
+//        std::cout << m_plane_names[plane1] << "   : " << a << ",   ";
+//        std::cout << m_plane_names[plane2] << "   : " << b << std::endl;
+
+        lambda_plus  = std::min(a, b);
+        lambda_minus = std::max(a, b);
 
         if (a == b) {
-            lambda_plus  = -std::numeric_limits<double>::infinity();
-            lambda_minus = std::numeric_limits<double>::infinity();
-        } else {
-            lambda_plus  = std::min(a, b);
-            lambda_minus = std::max(a, b);
+            // This occurs if the ray is parallel with the two
+            // planes.
+            // In this case we must determine, whether the ray
+            // is *between* the two planes.
+            // This occurs if the ray is "below" both planes.
+            double dist1 = m_planes[plane1].getSignedDist(ray.getOrigin());
+            double dist2 = m_planes[plane2].getSignedDist(ray.getOrigin());
+
+            if (dist1 < 0.0 && dist2 < 0.0) {
+               lambda_plus  = -std::numeric_limits<double>::infinity();
+               lambda_minus = std::numeric_limits<double>::infinity();
+            } else {
+               lambda_plus  = std::numeric_limits<double>::infinity();
+               lambda_minus = -std::numeric_limits<double>::infinity();
+            }
         }
     }
 public:

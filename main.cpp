@@ -101,22 +101,21 @@ static void test_plane()
 
 static void verify_box(const Box& box, const Ray& ray, bool expected, int line)
 {
-   std::cerr << "Testing line "   << line << std::endl;
-   std::cerr << "Box      : " << box << std::endl;
-   std::cerr << "Ray      : " << ray << std::endl;
-
+   std::cerr << "Testing line "   << line << " : ";
    double returned = box.intersectParam(ray);
-   std::cerr << "Returned : " << returned << std::endl;
 
    bool value = (returned > 0.0 );
 
    if (value != expected)
    {
       std::cerr << "FAIL" << std::endl;
+      std::cerr << "Box      : " << box << std::endl;
+      std::cerr << "Ray      : " << ray << std::endl;
+      std::cerr << "Returned : " << returned << std::endl;
+      std::cerr << std::endl;
    } else {
       std::cerr << "Success!" << std::endl;
    }
-   std::cerr << std::endl;
 }
 
 static void test_box()
