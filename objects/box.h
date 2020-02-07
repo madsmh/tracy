@@ -7,6 +7,7 @@
 
 
 #include "object.h"
+#include "plane.h"
 
 class Box : public Object {
 protected:
@@ -17,11 +18,7 @@ protected:
     // Array for the 8 vertices
     Vector3 m_corners [8];
 
-    // Array for the 6 normal vectors
-    Vector3 m_normals [6];
-
-    // Array for point in each plane given by the normal vectors
-    Vector3 m_pointsInPlanes [6];
+    Plane m_planes[6];
 
     // Below this is regarded as zero
     const double m_epsilon = 0.001;
@@ -31,7 +28,6 @@ protected:
     }
 
     void originLength2coordsNorms ( Vector3 sideLengths, Vector3 origin){
-
         m_lengths = sideLengths;
 
         // Calculate the vertices of the box and store in array m_corners
@@ -102,52 +98,37 @@ protected:
          *
          */
 
+        m_planes[0] = Plane(m_corners[0], m_corners[1], m_corners[2]);
+        m_planes[1] = Plane(m_corners[2], m_corners[7], m_corners[3]);
+        m_planes[2] = Plane(m_corners[1], m_corners[4], m_corners[7]);
 
-        // Calculate the normals of sides
-        m_normals[0] = cross(m_corners[2] - m_corners[1], m_corners[0] - m_corners[1]).normalize();
-        m_normals[1] = cross(m_corners[7] - m_corners[2], m_corners[3] - m_corners[2]).normalize();
-        m_normals[2] = cross(m_corners[7] - m_corners[4], m_corners[1] - m_corners[4]).normalize();
-        m_normals[3] = cross(m_corners[0] - m_corners[1], m_corners[4] - m_corners[1]).normalize();
-        m_normals[4] = cross(m_corners[6] - m_corners[3], m_corners[0] - m_corners[3]).normalize();
-        m_normals[5] = cross(m_corners[5] - m_corners[4], m_corners[7] - m_corners[4]).normalize();
+        m_planes[3] = Plane(m_corners[7], m_corners[4], m_corners[5]);
+        m_planes[4] = Plane(m_corners[1], m_corners[0], m_corners[4]);
+        m_planes[5] = Plane(m_corners[3], m_corners[6], m_corners[0]);
 
+        std::cout << m_planes[0] << std::endl;
+        std::cout << m_planes[1] << std::endl;
+        std::cout << m_planes[2] << std::endl;
+        std::cout << m_planes[3] << std::endl;
+        std::cout << m_planes[4] << std::endl;
+        std::cout << m_planes[5] << std::endl;
 
         /*
-         * Pairs of anti-parallel normal vectors:
-         * 0 and 5
-         * 1 and 3
-         * 2 and 4
+         * Pairs of parallel planes:
+         * 0 and 3
+         * 1 and 4
+         * 2 and 5
          */
-
-
-        // selects points in the place defined by the normal vector in m_normals[k]
-        m_pointsInPlanes[0] = m_corners[0];
-        m_pointsInPlanes[1] = m_corners[2];
-        m_pointsInPlanes[2] = m_corners[1];
-        m_pointsInPlanes[3] = m_corners[1];
-        m_pointsInPlanes[4] = m_corners[3];
-        m_pointsInPlanes[5] = m_corners[7];
     }
 
-    void calcLambda (Ray ray, double& lambda_plus, double& lambda_minus, int normalPlus, int normalMinus) const {
+    void calcLambda (Ray ray, double& lambda_plus, double& lambda_minus, int plane1, int plane2) const {
+        double a =  m_planes[plane1].intersectParam(ray);
+        double b = -m_planes[plane2].intersectParam(ray);
 
-        double dotProduct1, dotProduct2;
-        double inf = std::numeric_limits<double>::infinity();
+        lambda_plus  = std::min(a, b);
+        lambda_minus = std::max(a, b);
 
-        dotProduct1 = dot(ray.getDirection(),m_normals[normalPlus]);
-        dotProduct2 = dot(ray.getDirection(),m_normals[normalMinus]);
-
-        if (std::abs(dotProduct1) > m_epsilon){
-            double a = dot(m_pointsInPlanes[normalPlus]-ray.getOrigin(),  m_normals[normalPlus])/(dotProduct1);
-            double b = dot(m_pointsInPlanes[normalMinus]-ray.getOrigin(), m_normals[normalMinus])/(dotProduct2);
-
-            lambda_plus  = std::min(a, b);
-            lambda_minus = std::max(a, b);
-
-        } else {
-            lambda_plus  = -inf;
-            lambda_minus = inf;
-        }
+        std::cout << "Plus = " << lambda_plus << " , Minus = " << lambda_minus << std::endl;
     }
 public:
 
@@ -179,9 +160,9 @@ public:
          *
          *
          * Index of pairs of anti-parallel normal vectors:
-         * 0 and 5
-         * 1 and 3
-         * 2 and 4
+         * 0 and 3
+         * 1 and 4
+         * 2 and 5
          *
          * Indices 0, 1, 2 are the + planes in that order
          * and 5, 3, 4 are - planes in that order
@@ -190,24 +171,22 @@ public:
         // lambda+ index 0-2, lambda- index 3-5
         double  lambda[6];
 
-        calcLambda(ray, lambda[0], lambda[3], 0, 5);
-        calcLambda(ray, lambda[1], lambda[4], 1, 3);
-        calcLambda(ray, lambda[2], lambda[5], 2, 4);
+        calcLambda(ray, lambda[0], lambda[3], 0, 3);
+        calcLambda(ray, lambda[1], lambda[4], 1, 4);
+        calcLambda(ray, lambda[2], lambda[5], 2, 5);
 
         // Check for valid intersections
 
         double lambda_max = std::max(lambda[0], std::max(lambda[1], lambda[2]));
-        double lambda_min = std::min(lambda[3],std::min(lambda[4],lambda[5]));
+        double lambda_min = std::min(lambda[3], std::min(lambda[4],lambda[5]));
 
         for (double j : lambda) {
             if ((lambda_max <= j) && (j <= lambda_min))
             {
-                std::cout << j << std::endl;
                 return j;
             }
         }
 
-        std::cout << "-1.0" << std::endl;
         return -1.0;
 
 
@@ -217,11 +196,14 @@ public:
     }
 
     Vector3 getNormal(Vector3 intersection) const override {
-        for (int i = 0; i < 6; ++i) {
-            if (std::abs(dot(m_pointsInPlanes[i]-intersection, m_normals[i])) < m_epsilon){
-                return m_normals[i];
-            }
-        }
+//          // Below this is regarded as zero
+//          double epsilon = 0.001;
+//  
+//          for (int i = 0; i < 6; ++i) {
+//              if (m_planes[i].intersectParam(ray) < epsilon) {
+//                  return m_planes[i].getNormal(intersection);
+//              }
+//          }
         return Vector3(0.0, 0.0, 0.0); // TODO
     }
 };

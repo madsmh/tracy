@@ -49,6 +49,30 @@ static void verify(const Box& box, const Ray& ray, bool expected, int line)
    }
 }
 
+static void test_plane()
+{
+   Vector3 point1(1.0, 1.0, 1.0);
+   Vector3 point2(100.0, 2.0, 3.0);
+   Vector3 point3(4.0, 200.0, 5.0);
+
+   Plane plane(point1, point2, point3);
+   std::cout << "Plane : " << plane << std::endl;
+
+   // Calculate some random point in the plane.
+   Vector3 point = point1 + 0.1*point2 + 0.2*point3;
+
+   // Calculate a ray intersecting the plane at a given point.
+   Ray ray = getRandomRayTowardsPoint(point);
+   std::cout << "Ray : " << ray << std::endl;
+
+   // Calculate paramter for rays intersection with plane.
+   double t = plane.intersectParam(ray);
+   
+   Vector3 intersection = ray.getPtAtParameter(t);
+
+   std::cout << "t = " << t << ", point = " <<  point << ", intersection = " << intersection << std::endl;
+}
+
 static void test_box()
 {
    // Setup variables for the test:
@@ -56,34 +80,36 @@ static void test_box()
    // ray  : Some random ray passing through the centre of the box.
    // dir1 & dir2 : Two normalized perpendicular vectors, each perpendicular to the ray.
 
-   Vector3 centre(5.0, 5.0, 5.0);               // TODO
-   Vector3 lengths(1.0, 1.0,1.0);                 // TODO
+   Vector3 centre(500.0, 600.0, 900.0);               // TODO
+   Vector3 lengths(13.0, 15.0, 17.0);                 // TODO
    Box box(lengths, centre);
-   Ray ray(Vector3(0.0,0.0,0.0),Vector3(1.0,0.0,0.0));
-   //Ray ray = getRandomRayTowardsPoint(centre);
-   //Vector3 dir1 = getRandomPerpendicularDirection(ray.getDirection());
-   //Vector3 dir2 = getPerpendicularDirection(ray.getDirection(), dir1);
+   //Ray ray(Vector3(0.0,0.0,0.0),Vector3(1.0,0.0,0.0));
+
+   Ray ray = getRandomRayTowardsPoint(centre);
+   Vector3 dir1 = getRandomPerpendicularDirection(ray.getDirection());
+   Vector3 dir2 = getPerpendicularDirection(ray.getDirection(), dir1);
 
    verify(box, ray, true, __LINE__);
 
-   //verify(box, ray+100*ray.getDirection(), true, __LINE__);
-   //verify(box, ray-100*ray.getDirection(), true, __LINE__);
+   verify(box, ray+100*ray.getDirection(), true, __LINE__);
+   verify(box, ray-100*ray.getDirection(), true, __LINE__);
 
-   //verify(box, ray+100*dir1, false, __LINE__);
-   //verify(box, ray-100*dir1, false, __LINE__);
+   verify(box, ray+100*dir1, false, __LINE__);
+   verify(box, ray-100*dir1, false, __LINE__);
 
-   //verify(box, ray+100*dir2, false, __LINE__);
-   //verify(box, ray-100*dir2, false, __LINE__);
+   verify(box, ray+100*dir2, false, __LINE__);
+   verify(box, ray-100*dir2, false, __LINE__);
 }
 
 int main()
 {
-   //test_box();
+    test_plane();
+//    test_box();
 
-    Vector3 centre(5.0, 5.0, 5.0);
-    Vector3 lengths(1.0, 1.0,1.0);
-    Box box(lengths, centre);
-    Ray ray(Vector3(0.0,0.0,0.0),Vector3(1.0,0.0,0.0));
-    box.intersectParam(ray);
+//    Vector3 centre(5.0, 5.0, 5.0);
+//    Vector3 lengths(1.0, 1.0,1.0);
+//    Box box(lengths, centre);
+//    Ray ray(Vector3(0.0,0.0,0.0),Vector3(1.0,0.0,0.0));
+//    box.intersectParam(ray);
 }
 
