@@ -5,7 +5,7 @@
 #ifndef TRACY_BOX_H
 #define TRACY_BOX_H
 
-
+#include <limits>
 #include "object.h"
 #include "plane.h"
 
@@ -38,7 +38,7 @@ protected:
         // Calculate the vertices of the box and store in array m_corners
         double x0 = origin[0] - m_lengths[0]/2.0;
         double y0 = origin[1] - m_lengths[1]/2.0;
-        double z0 = origin[2] - m_lengths[2]/2.0;
+        double z0 = origin[2] + m_lengths[2]/2.0;
 
         /*
          * Sketch of the points m_corners[k]
@@ -67,11 +67,11 @@ protected:
         m_corners[6] = m_corners[3] - deltaZ;
         m_corners[7] = m_corners[2] - deltaZ;
 
-        m_planes[0] = Plane(m_corners[0], m_corners[1], m_corners[2]);  // Front
+        m_planes[0] = Plane(m_corners[0], m_corners[2], m_corners[1]);  // Front
         m_planes[1] = Plane(m_corners[2], m_corners[7], m_corners[6]);  // Top
         m_planes[2] = Plane(m_corners[1], m_corners[4], m_corners[7]);  // Right
 
-        m_planes[3] = Plane(m_corners[4], m_corners[5], m_corners[6]);  // Back
+        m_planes[3] = Plane(m_corners[4], m_corners[6], m_corners[5]);  // Back
         m_planes[4] = Plane(m_corners[1], m_corners[0], m_corners[5]);  // Bottom
         m_planes[5] = Plane(m_corners[0], m_corners[3], m_corners[6]);  // Left
 
@@ -94,9 +94,6 @@ protected:
         double a = m_planes[plane1].intersectParam(ray);
         double b = m_planes[plane2].intersectParam(ray);
 
-//        std::cout << m_plane_names[plane1] << "   : " << a << ",   ";
-//        std::cout << m_plane_names[plane2] << "   : " << b << std::endl;
-
         lambda_plus  = std::min(a, b);
         lambda_minus = std::max(a, b);
 
@@ -109,14 +106,33 @@ protected:
             double dist1 = m_planes[plane1].getSignedDist(ray.getOrigin());
             double dist2 = m_planes[plane2].getSignedDist(ray.getOrigin());
 
-            if (dist1 < 0.0 && dist2 < 0.0) {
+            std::cout << "dist1: " << dist1 << std::endl;
+            std::cout << "dist2: " << dist2 << std::endl;
+
+
+            /*
+             * Case 1: dist1 <0 && dist2 <0 meaning that the ray is in between two planes
+             *
+             * Case 2: (dist1 < 0 && dist2 > ) || (dist 1 > 0 && dist2 < 0) meaning the ray is NOT
+             * inbetween the two planes in question
+             *
+             * Case 3: dist1 > 0 && dist2 > 0 empty
+             * ...
+             *
+             */
+            if (dist1 < 0.0 && dist2 < 0.0 ) {
                lambda_plus  = -std::numeric_limits<double>::infinity();
                lambda_minus = std::numeric_limits<double>::infinity();
-            } else {
+            } else if ((dist1> 0 && dist2 < 0) || (dist1 < 0 && dist2 > 0)){
                lambda_plus  = std::numeric_limits<double>::infinity();
                lambda_minus = -std::numeric_limits<double>::infinity();
+            } else {
+                lambda_plus  = -std::numeric_limits<double>::infinity();
+                lambda_minus = std::numeric_limits<double>::infinity();
             }
         }
+        //std::cout << m_plane_names[plane1] << "   : " << a << ",   ";
+        //std::cout << m_plane_names[plane2] << "   : " << b << std::endl;
     }
 public:
 
@@ -168,9 +184,14 @@ public:
         double lambda_max = std::max(lambda[0], std::max(lambda[1], lambda[2]));
         double lambda_min = std::min(lambda[3], std::min(lambda[4], lambda[5]));
 
+        std::cout << "front lambda: " << lambda[0] << ", " << "back Lambda  : " << lambda[3] << std::endl;
+        std::cout << "top lambda  : " << lambda[1] << ", " << "bottom Lambda: " << lambda[4] << std::endl;
+        std::cout << "right lambda: " << lambda[2] << ", " << "left Lambda  : " << lambda[5] << std::endl;
+
         for (double j : lambda) {
             if ((lambda_max <= j) && (j <= lambda_min))
             {
+                std::cout << "Intersect: " << j << std::endl;
                 return j;
             }
         }
