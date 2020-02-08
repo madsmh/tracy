@@ -106,8 +106,8 @@ protected:
             double dist1 = m_planes[plane1].getSignedDist(ray.getOrigin());
             double dist2 = m_planes[plane2].getSignedDist(ray.getOrigin());
 
-            std::cout << "dist1: " << dist1 << std::endl;
-            std::cout << "dist2: " << dist2 << std::endl;
+            // std::cout << "dist1: " << dist1 << std::endl;
+            // std::cout << "dist2: " << dist2 << std::endl;
 
 
             /*
@@ -120,6 +120,7 @@ protected:
              * ...
              *
              */
+
             if (dist1 < 0.0 && dist2 < 0.0 ) {
                lambda_plus  = -std::numeric_limits<double>::infinity();
                lambda_minus = std::numeric_limits<double>::infinity();
@@ -184,14 +185,14 @@ public:
         double lambda_max = std::max(lambda[0], std::max(lambda[1], lambda[2]));
         double lambda_min = std::min(lambda[3], std::min(lambda[4], lambda[5]));
 
-        std::cout << "front lambda: " << lambda[0] << ", " << "back Lambda  : " << lambda[3] << std::endl;
-        std::cout << "top lambda  : " << lambda[1] << ", " << "bottom Lambda: " << lambda[4] << std::endl;
-        std::cout << "right lambda: " << lambda[2] << ", " << "left Lambda  : " << lambda[5] << std::endl;
+        // std::cout << "front lambda: " << lambda[0] << ", " << "back Lambda  : " << lambda[3] << std::endl;
+        // std::cout << "top lambda  : " << lambda[1] << ", " << "bottom Lambda: " << lambda[4] << std::endl;
+        // std::cout << "right lambda: " << lambda[2] << ", " << "left Lambda  : " << lambda[5] << std::endl;
 
         for (double j : lambda) {
             if ((lambda_max <= j) && (j <= lambda_min))
             {
-                std::cout << "Intersect: " << j << std::endl;
+                // std::cout << "Intersect: " << j << std::endl;
                 return j;
             }
         }
