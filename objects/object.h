@@ -15,6 +15,7 @@ public:
 protected:
     // x, y, z coordinate of the origin
     Vector3 m_origin;
+    bool m_invertNormals = false;
 
     virtual Vector3 getOrigin() const = 0;
 
@@ -29,6 +30,11 @@ public:
     virtual double intersectParam(Ray ray) const = 0;
 
     virtual void setOrigin(Vector3 newOrigin) = 0;
+
+    void setInvertNormals (bool invertNormals){
+
+        m_invertNormals = invertNormals;
+    }
 
 };
 

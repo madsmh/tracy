@@ -137,10 +137,11 @@ protected:
     }
 public:
 
-    explicit Box (Vector3 sideLengths, Vector3 origin = Vector3(0,0,0)){
+    explicit Box (Vector3 sideLengths, Vector3 origin = Vector3(0,0,0), bool invertNormals = false){
 
         m_lengths = sideLengths;
         m_origin = origin;
+        m_invertNormals = invertNormals;
         originLength2coordsNorms(m_lengths, m_origin);
 
     }
@@ -206,15 +207,26 @@ public:
     }
 
     Vector3 getNormal(Vector3 intersection) const override {
-//          // Below this is regarded as zero
-//          double epsilon = 0.001;
-//  
-//          for (int i = 0; i < 6; ++i) {
-//              if (m_planes[i].intersectParam(ray) < epsilon) {
-//                  return m_planes[i].getNormal(intersection);
-//              }
-//          }
-        return Vector3(0.0, 0.0, 0.0); // TODO
+
+        /*
+         * If intersection lies in one of the planes of this Box
+         * the normal vector of that plane will be returned.
+         *
+         * If it does not, a zero-vector will be returned.
+         *
+         */
+
+        for (const auto & m_plane : m_planes) {
+            if (dot(m_plane.getOrigin()-intersection,m_planes->getNormal(intersection))< m_epsilon) {
+                if (m_invertNormals){
+                    return -1.0*m_plane.getNormal(intersection);
+                } else{
+                    return m_plane.getNormal(intersection);
+                }
+            }
+        }
+
+        return Vector3();
     }
 };
 
