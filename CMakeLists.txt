@@ -13,4 +13,6 @@ add_executable(tracy
                objects/sphere.cpp
                objects/sphere.h
                objects/box.cpp
-               objects/box.h)
+               objects/box.h
+        materials/material.cpp
+        materials/material.h materials/lambertian.h)
