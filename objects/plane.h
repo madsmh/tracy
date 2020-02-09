@@ -18,9 +18,10 @@ public:
         m_normal = Vector3(0.0, 0.0, 0.0);
     }
 
-    Plane(Vector3 point1, Vector3 point2, Vector3 point3) {
+    Plane(Vector3 point1, Vector3 point2, Vector3 point3, bool invertNormal = false) {
         m_origin = point1;
         m_normal = cross(point2-point1, point3-point1).normalize();
+        m_invertNormals = invertNormal;
     }
 
     inline friend std::ostream& operator << (std::ostream& os, const Plane& rhs) {
@@ -32,7 +33,11 @@ public:
     }
 
     Vector3 getNormal (Vector3 intersection) const override {
-       return m_normal;
+        if (m_invertNormals){
+            return -1.0*m_normal;
+        } else{
+            return m_normal;
+        }
     }
 
     void setOrigin(Vector3 newOrigin) override {
@@ -57,6 +62,10 @@ public:
         } else {
            return std::numeric_limits<double>::infinity();
         }
+    }
+
+    void setInvertNormals(bool invertNormals) override {
+        m_invertNormals = invertNormals;
     }
 
 };

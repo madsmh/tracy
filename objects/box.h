@@ -144,6 +144,12 @@ public:
         m_invertNormals = invertNormals;
         originLength2coordsNorms(m_lengths, m_origin);
 
+        if (m_invertNormals){
+            for (int i = 0; i < 6 ; ++i) {
+                m_planes[i].setInvertNormals(m_invertNormals);
+            }
+        }
+
     }
 
     inline friend std::ostream& operator << (std::ostream& os, const Box& rhs) {
@@ -216,17 +222,22 @@ public:
          *
          */
 
-        for (const auto & m_plane : m_planes) {
-            if (dot(m_plane.getOrigin()-intersection,m_planes->getNormal(intersection))< m_epsilon) {
-                if (m_invertNormals){
-                    return -1.0*m_plane.getNormal(intersection);
-                } else{
-                    return m_plane.getNormal(intersection);
-                }
+        for (const auto &m_plane : m_planes) {
+            if (dot(m_plane.getOrigin() - intersection, m_planes->getNormal(intersection)) < m_epsilon) {
+                return m_plane.getNormal(intersection);
             }
         }
 
         return Vector3();
+
+    }
+
+    void setInvertNormals(bool invertNormals) override {
+        m_invertNormals = invertNormals;
+
+        for (int i = 0; i < 6 ; ++i) {
+            m_planes[i].setInvertNormals(m_invertNormals);
+        }
     }
 };
 

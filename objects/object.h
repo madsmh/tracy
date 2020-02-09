@@ -31,10 +31,7 @@ public:
 
     virtual void setOrigin(Vector3 newOrigin) = 0;
 
-    void setInvertNormals (bool invertNormals){
-
-        m_invertNormals = invertNormals;
-    }
+    virtual void setInvertNormals (bool invertNormals)=0;
 
 };
 
