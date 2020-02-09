@@ -20,7 +20,7 @@ static Ray getRandomRayTowardsPoint(const Vector3& point)
 {
    // A random direction
    //const Vector3 direction = getRandomVector3().normalize();
-   const Vector3 direction(1.0, 0.0, 0.0);
+   const Vector3 direction(0.0, 0.0, 1.0);
 
    // A random distance away from the point
    const double dist = -log(uniformDistribution(generator));
@@ -49,7 +49,7 @@ static Vector3 getPerpendicularDirection(const Vector3& vector1, const Vector3& 
 
 static void verify_plane(const Plane& plane, const Ray& ray, const Vector3& exp_intersection, int line)
 {
-   // Calculate paramter for rays intersection with plane.
+   // Calculate parameter for rays intersection with plane.
    double t = plane.intersectParam(ray);
    
    Vector3 intersection = ray.getPtAtParameter(t);
@@ -118,15 +118,15 @@ static void verify_box(const Box& box, const Ray& ray, bool expected, int line)
    }
 }
 
-static void test_box()
+static void test_box(Vector3 centre, Vector3 lengths)
 {
    // Setup variables for the test:
    // box  : A random box somewhere far from the origin.
    // ray  : Some random ray passing through the centre of the box.
    // dir1 & dir2 : Two normalized perpendicular vectors, each perpendicular to the ray.
 
-   Vector3 centre(10.0, 0.0, 0.0);               // TODO
-   Vector3 lengths(2.0, 2.0, 2.0);                 // TODO
+   //Vector3 centre(10.0, 0.0, 0.0);               // TODO
+   //Vector3 lengths(2.0, 2.0, 2.0);                 // TODO
    Box box(lengths, centre);
    //Ray ray(Vector3(0.0,0.0,0.0),Vector3(1.0,0.0,0.0));
 
@@ -151,7 +151,9 @@ static void test_box()
 int main()
 {
 //    test_plane();
-    test_box();
+    //test_box(Vector3(0, 55, 0), Vector3(4,4,4));
+    //test_box(Vector3(10, 0 ,0), Vector3(2, 2, 2));
+     //test_box(Vector3(0,0,77.6), Vector3(3,2,2));
 
 //    Vector3 centre(5.0, 5.0, 5.0);
 //    Vector3 lengths(1.0, 1.0,1.0);
