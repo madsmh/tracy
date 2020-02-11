@@ -24,6 +24,12 @@ public:
         m_invertNormals = invertNormal;
     }
 
+    Plane(Vector3 point, Vector3 normal, bool invertNormal = false){
+        m_origin = point;
+        m_normal = normal;
+        m_invertNormals = invertNormal;
+    }
+
     inline friend std::ostream& operator << (std::ostream& os, const Plane& rhs) {
        return os << "Point=" << rhs.m_origin << ", Normal=" << rhs.m_normal;
     }
