@@ -223,7 +223,10 @@ public:
          */
 
         for (const auto &m_plane : m_planes) {
-            if (dot(m_plane.getOrigin() - intersection, m_planes->getNormal(intersection)) < m_epsilon) {
+            double abs_dotProduct = std::abs(dot(m_plane.getOrigin() - intersection, m_plane.getNormal(intersection)));
+            std::cout << abs_dotProduct << std::endl;
+            if (abs_dotProduct < m_epsilon) {
+
                 return m_plane.getNormal(intersection);
             }
         }
