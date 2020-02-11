@@ -12,7 +12,7 @@ class Sphere : public Object {
 protected:
     double m_radius = 1;
 
-    Vector3 getOrigin() override {
+    Vector3 getOrigin() const override {
         return m_origin;
     };
 
@@ -22,12 +22,16 @@ public:
         m_origin = origin;
     }
 
-    Vector3 getNormal(Vector3 intersection) override{
+    Vector3 getNormal(Vector3 intersection) const override{
         return (intersection-m_origin).normalize();
     }
 
-    // Returns a positive parameter for appropriate intersections. Discard if non-positive.
-    double doesIntersect(Ray ray) override {
+    double intersectParam(Ray ray) const override {
+
+        // Returns the parameter at which the ray intersects.
+        // Only positive parameters are used, returns -1.0 if
+        // no intersection.
+
         double a = dot(ray.getDirection(), ray.getDirection());
         double b = 2.0 * dot(ray.getOrigin(), ray.getDirection()-m_origin);
         double c = dot(ray.getOrigin()-m_origin, ray.getOrigin()-m_origin) - m_radius * m_radius;

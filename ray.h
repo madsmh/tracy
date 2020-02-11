@@ -30,6 +30,19 @@ public:
     void setOrigin(Vector3 new_origin){
         m_origin = new_origin;
     }
+
+    inline friend Ray operator + (const Ray& lhs, const Vector3& rhs ) {
+        return Ray(lhs.getOrigin()+rhs, lhs.getDirection());;
+    }
+
+    inline friend Ray operator - (const Ray& lhs, const Vector3& rhs ) {
+        return Ray(lhs.getOrigin()-rhs, lhs.getDirection());;
+    }
+
+    inline friend std::ostream& operator << (std::ostream& os, const Ray& rhs) {
+       return os << "Origin=" << rhs.m_origin << ", Direction=" << rhs.m_direction;
+    }
+
 };
 
 
