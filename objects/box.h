@@ -75,10 +75,6 @@ protected:
         m_planes[4] = Plane(m_corners[1], m_corners[0], m_corners[5]);  // Bottom
         m_planes[5] = Plane(m_corners[0], m_corners[3], m_corners[6]);  // Left
 
-        for (int i=0; i<6; ++i)
-        {
-           std::cout << m_plane_names[i] << " : " << m_planes[i] << std::endl;
-        }
 
         /*
          * Pairs of parallel planes:
@@ -153,7 +149,13 @@ public:
     }
 
     inline friend std::ostream& operator << (std::ostream& os, const Box& rhs) {
-       return os << rhs.m_lengths << " , " << rhs.m_origin;
+
+        for (int i=0; i<6; ++i)
+        {
+          os << rhs.m_plane_names[i] << " : " << rhs.m_planes[i].getNormal(Vector3()) << std::endl;
+        }
+
+        return os << rhs.m_lengths << " , " << rhs.m_origin;
     }
 
     void setOrigin(Vector3 newOrigin) override{
