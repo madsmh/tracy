@@ -38,7 +38,7 @@ public:
         double d = b*b-4.0*a*c;
 
         if (d < 0){
-            return -1.0;
+            return std::numeric_limits<double>::infinity();
         } else {
             return (-b - std::sqrt(d)) / (2.0 * a);
         }

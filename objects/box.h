@@ -206,10 +206,10 @@ public:
             }
         }
 
-        return -1.0;
+        return std::numeric_limits<double>::infinity();
 
 
-        // if no valid intersection return negative number
+        // if no valid intersections are found, infinity will be returned.
 
 
     }
