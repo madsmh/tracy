@@ -61,7 +61,7 @@ public:
     double intersectParam (Ray ray) const override {
         double dotProduct = dot(ray.getDirection(),m_normal);
         // Below this is regarded as zero
-        double epsilon = 0.001;
+        const double epsilon = 0.001;
 
         if (std::abs(dotProduct) > epsilon) {
            return dot(m_origin-ray.getOrigin(), m_normal)/dotProduct;
