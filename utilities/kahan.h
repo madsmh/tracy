@@ -10,12 +10,12 @@
 // implements the Kahan summation algorithm as described at
 // https://en.wikipedia.org/wiki/Kahan_summation_algorithm
 
-double kahanSum(std::vector<double> input){
+double kahanSum(const std::vector<double>& input){
     double sum = 0.0;
     double c = 0.0;
 
-    for (int i = 0; i <input.size() ; ++i) {
-        double y = input[i] - c;
+    for (double i : input) {
+        double y = i - c;
         double t = sum + y;
 
         c = (t-sum)-y;
