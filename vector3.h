@@ -61,12 +61,10 @@ class Vector3 {
     inline double operator[](int i) const { return m_coords[i];}
     inline double& operator[](int i) { return m_coords[i];}
 
-    inline Vector3 normalize() {
+    inline Vector3 normalize() const {
         double k = 1.0/norm();
-        m_coords[0] *= k;
-        m_coords[1] *= k;
-        m_coords[2] *= k;
-        return *this;
+
+        return k*Vector3(m_coords[0], m_coords[1], m_coords[2]);
     }
 
     inline Vector3& operator += (const Vector3& rhs) {
@@ -101,12 +99,12 @@ class Vector3 {
         return (lhs[0] == rhs[0]) && (lhs[1] == rhs[1]) && (lhs[2] == rhs[2]);
     }
 
-    inline friend Vector3 operator * (Vector3 lhs, const double rhs ) {
-        return lhs *= rhs;
+    inline friend Vector3 operator * (const Vector3 lhs, const double rhs ) {
+        return Vector3(lhs.x() * rhs, lhs.y() * rhs,lhs.z() * rhs);
     }
 
-    inline friend Vector3 operator * (const double lhs, Vector3 rhs ) {
-        return rhs *= lhs;
+    inline friend Vector3 operator * (const double lhs, const Vector3 rhs ) {
+        return Vector3(rhs.x() * lhs, rhs.y() * lhs, rhs.z() * lhs);
     }
 
     inline friend Vector3 operator * (const Vector3& lhs, const Vector3& rhs) {
@@ -116,12 +114,17 @@ class Vector3 {
         return Vector3(x, y, z);
     }
 
-    inline friend Vector3 operator + (Vector3 lhs, const Vector3& rhs) {
-        return lhs += rhs;
+
+    inline friend Vector3 operator + (const Vector3 lhs, const Vector3& rhs) {
+        return Vector3(rhs.x()+lhs.x(), rhs.y()-lhs.y(), rhs.z()-lhs.z());
     }
 
-    inline friend Vector3 operator - (Vector3 lhs, const Vector3& rhs) {
-        return lhs -= rhs;
+    inline friend Vector3 operator - (const Vector3 lhs, const Vector3& rhs) {
+        return Vector3(rhs.x()-lhs.x(), rhs.y()-lhs.y(), rhs.z()-lhs.z());
+    }
+
+    inline Vector3 operator- (){
+        return Vector3(-this->x(), -this->y(), -this->z());
     }
 
     inline friend Vector3 operator / (Vector3 lhs, const double rhs){
@@ -165,4 +168,17 @@ inline Vector3 cross(const Vector3& lhs, const Vector3& rhs) {
     double y = lhs[2]*rhs[0] - lhs[0]*rhs[2];
     double z = lhs[0]*rhs[1] - lhs[1]*rhs[0];
     return Vector3(x, y, z);
+}
+
+inline void coordinateSystem(const Vector3& v1, Vector3& v2, Vector3& v3)  {
+
+    Vector3 v1_norm = v1.normalize();
+
+    if (std::abs(v1_norm.x())>std::abs(v1_norm.y())){
+        v2 = Vector3(-v1_norm.z(), 0.0, v1_norm.x()).normalize();
+    } else {
+        v2 = Vector3(0.0, -v1_norm.z(), v1_norm.y()).normalize();
+    }
+
+    v3 = cross(v1, v2);
 }
