@@ -24,9 +24,9 @@ public:
     Vector3 getDirection() const {
         return m_direction;
     }
-    Vector3 getPtAtParameter(double t) const {
-        return m_origin + t*m_direction;
-    }
+    //Vector3 getPtAtParameter(double t) const {
+    //    return m_origin + t*m_direction;
+    //}
     void setOrigin(Vector3 new_origin){
         m_origin = new_origin;
     }
@@ -43,6 +43,10 @@ public:
        return os << "Origin=" << rhs.m_origin << ", Direction=" << rhs.m_direction;
     }
 
+    // Regard a ray as a function of a single parameter t.
+    inline Vector3 operator() (double t) const {
+        return m_origin + t*m_direction;
+    }
 };
 
 
