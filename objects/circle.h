@@ -30,7 +30,7 @@ public:
     double intersectParam(Ray ray) const override {
         double planeIntersectParam = m_circle_plane.intersectParam(ray);
         if (planeIntersectParam != std::numeric_limits<double>::infinity()){
-            if ((ray.getPtAtParameter(planeIntersectParam)-m_origin).norm() < m_radius){
+            if ((ray(planeIntersectParam)-m_origin).norm() < m_radius){
                 return planeIntersectParam;
             } else {
                 return std::numeric_limits<double>::infinity();

@@ -29,7 +29,7 @@ static Ray getRandomRayTowardsPoint(const Vector3& point)
    Ray tempRay(point, direction);
 
    // A point far away from the given, in the backwards direction.
-   Vector3 newPoint = tempRay.getPtAtParameter(-dist);
+   Vector3 newPoint = tempRay(-dist);
 
    // Return ray pointing towards the given point.
    return Ray(newPoint, direction);
@@ -52,7 +52,7 @@ static void verify_plane(const Plane& plane, const Ray& ray, const Vector3& exp_
    // Calculate parameter for rays intersection with plane.
    double t = plane.intersectParam(ray);
    
-   Vector3 intersection = ray.getPtAtParameter(t);
+   Vector3 intersection = ray(t);
 
    double dist = (intersection-exp_intersection).norm();
 
