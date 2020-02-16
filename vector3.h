@@ -1,6 +1,6 @@
-/* Copyright (c) 2019 By the Authors
+/* Copyright (c) 2020 By the Authors
  *
- * This file is part of MMRender.
+ * This file is part of Tracy.
 
  MMRenderer is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
