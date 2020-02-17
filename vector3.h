@@ -81,14 +81,14 @@ class Vector3 {
         return *this;
     }
 
-    inline Vector3& operator *= (const double rhs) {
+    inline Vector3& operator *= (const double& rhs) {
         m_coords[0] *= rhs;
         m_coords[1] *= rhs;
         m_coords[2] *= rhs;
         return *this;
     }
 
-    inline Vector3& operator /= (const double rhs) {
+    inline Vector3& operator /= (const double& rhs) {
         m_coords[0] /= rhs;
         m_coords[1] /= rhs;
         m_coords[2] /= rhs;
@@ -99,11 +99,11 @@ class Vector3 {
         return (lhs[0] == rhs[0]) && (lhs[1] == rhs[1]) && (lhs[2] == rhs[2]);
     }
 
-    inline friend Vector3 operator * (const Vector3 lhs, const double rhs ) {
+    inline friend Vector3 operator * (const Vector3& lhs, const double& rhs ) {
         return Vector3(lhs.x() * rhs, lhs.y() * rhs,lhs.z() * rhs);
     }
 
-    inline friend Vector3 operator * (const double lhs, const Vector3 rhs ) {
+    inline friend Vector3 operator * (const double& lhs, const Vector3& rhs ) {
         return Vector3(rhs.x() * lhs, rhs.y() * lhs, rhs.z() * lhs);
     }
 
