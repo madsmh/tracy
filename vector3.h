@@ -115,20 +115,20 @@ class Vector3 {
     }
 
 
-    inline friend Vector3 operator + (const Vector3 lhs, const Vector3& rhs) {
-        return Vector3(rhs.x()+lhs.x(), rhs.y()-lhs.y(), rhs.z()-lhs.z());
+    inline friend Vector3 operator + (const Vector3& lhs, const Vector3& rhs) {
+        return Vector3(rhs.x()+lhs.x(), rhs.y()+lhs.y(), rhs.z()+lhs.z());
     }
 
-    inline friend Vector3 operator - (const Vector3 lhs, const Vector3& rhs) {
-        return Vector3(rhs.x()-lhs.x(), rhs.y()-lhs.y(), rhs.z()-lhs.z());
+    inline friend Vector3 operator - (const Vector3& lhs, const Vector3& rhs) {
+        return Vector3(lhs.x()-rhs.x(), lhs.y()-rhs.y(), lhs.z()-rhs.z());
     }
 
     inline Vector3 operator- (){
-        return Vector3(-this->x(), -this->y(), -this->z());
+        return Vector3(-m_coords[0], -m_coords[1], -m_coords[2]);
     }
 
-    inline friend Vector3 operator / (Vector3 lhs, const double rhs){
-        return lhs /= rhs;
+    inline friend Vector3 operator / ( const Vector3& lhs, const double rhs){
+        return lhs * 1/rhs;
     }
 
     inline friend std::ostream& operator << (std::ostream& os, const Vector3& rhs) {
